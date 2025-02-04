@@ -1,0 +1,416 @@
+Mitmerealine tekst
+Pikemate tekstide lisamisel on need vaikimisi üherealised ja lähevad akna alast välja.
+
+
+
+Üks võimalus on lisada käsitsi reavahetusi ehk lisa \n tekstisõne sisse
+
+import tkinter as tk
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+   
+    # Pika teksti kuvamine
+    lorem = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit. \nLorem ipsum dolor sit amet, \nconsectetur adipiscing elit. \nLorem ipsum dolor sit amet, consectetur adipiscing elit. \nLorem ipsum dolor sit amet, consectetur adipiscing elit."
+    label = tk.Label(aken, text=lorem)
+    label.pack()
+  
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
+
+Nii alati kaugele ei jõua ja seepärast oleks mõistlikum kasutada wraplength argumenti.
+
+    # Pika teksti kuvamine
+    lorem = "Lorem ipsum dolor sit amet,consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    label = tk.Label(aken, text=lorem, wraplength=380)
+    label.pack()
+
+
+
+Pikema teksti kuvamine (Text)
+Tkinteri Label vidin on mõeldud lühikese teksti, piltide või muude andmete kuvamiseks, mis ei vaja kasutajapoolset muutmist. Seda kasutatakse staatilise teabe näitamiseks, nagu sildid, pealkirjad, kirjeldused jne. Pikemate tekstide puhul tuleb kasutada Text vidinat. Seda kasutatakse siis, kui on vaja, et kasutaja saaks teksti sisestada ja redigeerida, näiteks märkmete tegemiseks, tekstiväljade täitmiseks jne.
+
+Järgmine koodinäide demonstreerib, kuidas Tkinteriga luua aken ja kuvada seal Text vidina abil pikem tekst:
+
+import tkinter as tk
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+   
+    # Pika teksti kuvamine
+    lorem = "Lorem ipsum dolor sit amet,consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    tekst = tk.Text(aken, wrap=tk.WORD)
+    tekst.insert(tk.INSERT, lorem)
+    tekst.pack()
+   
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+Text vidina kasutamisel ei saa enam itse teksti parameetrina lisada. See toimub siin .insert() meetodi abil, mis võimaldab suuremat kontrolli sisu paigutuse üle. Me saame nüüd täpselt määrata, kuhu mingi tekst asub ehk tegemist on kursoriga. Näiteks lisame kolm teksti ja viimase teksti puhul saadame kursori 1.0 asukohta ehk esimese rea algusesse.
+
+import tkinter as tk
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+   
+    tekst = tk.Text(aken, wrap=tk.WORD)
+    tekst.pack()
+   
+    # Lisame kolm korda teksti, aga kolmas läheb algusesse
+    tekst.insert(tk.INSERT, "Esimene tekst.\n")
+    tekst.insert(tk.INSERT, "Teine tekst.\n")
+    tekst.insert('1.0', "Kolmas tekst.\n")  # Lisab algusesse
+   
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
+
+Kui on vaja lisada tekst jälle lõppu, siis kasuta parameetrit END.
+
+tekst.insert(tk.END, "Neljas tekst.\n")
+
+Teksti kuvamine tekstifailist
+Tekstifaili sisu kuvamiseks Tkinteri Text vidinas, teeme uue meetodi, mis loeb etteantud tekstifaili ja selle sisu lisab Text vidinasse.
+
+import tkinter as tk
+
+def loe_fail(failinimi):
+    with open(failinimi, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+   
+    tekst = tk.Text(aken, wrap=tk.WORD)
+    tekst.pack()
+   
+    failisisu = loe_fail("lorem.txt")
+    tekst.insert(tk.INSERT, failisisu)
+   
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
+
+Kerimisriba (scrollbar) vidina lisamine
+Antud tekst on liiga pikk ja ülejäänud osa peidetakse. See tekst on nüüd hiirerulliga keritav aga pole koheselt arusaadav. Seepärast võiks sellele lisada kerimisriba (scrollbar) vidina.
+
+Järgmine koodinäide demonstreerib, kuidas lisada kerimisriba Tkinteri Text vidinale ja konfigureerida need töötama koos:
+
+import tkinter as tk
+
+def loe_fail(failinimi):
+    with open(failinimi, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+
+    tekst = tk.Text(aken, wrap=tk.WORD)
+    # Kerimisriba loomine
+    scrollbar = tk.Scrollbar(aken, command=tekst.yview)
+    # Kerimisriba positsiooni seadmine
+    tekst.config(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    tekst.pack(expand=True, fill=tk.BOTH)
+
+    failisisu = loe_fail("lorem.txt")
+    tekst.insert(tk.INSERT, failisisu)
+
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
+
+Selles näites loome kõigepealt Scrollbar vidina ja seome selle käsu (command) Text vidina yview meetodiga, mis haldab vertikaalset kerimist. Seejärel konfigureerime Text vidina nii, et kui selle sisu muutub, siis uuendatakse ka kerimisriba. yscrollcommand parameeter määrab, et Scrollbar vidinat tuleks uuendada vastavalt Text vidina sisule.
+
+Üritan vältida hetkel sisu paigutamist, aga selleks, et kerimisriba oleks meile tuttavalt paremal ääres tuleb seda nüüd natuke teha.  Asetame kerimisriba akna paremale küljele ja seadistame selle vertikaalselt täitma kogu kõrguse (fill=tk.Y). Text vidin paigutatakse akna vasakule küljele ja seadistatakse täitma nii laiust kui kõrgust (fill=tk.BOTH, expand=True), et see saaks laieneda koos aknaga.
+
+Label teksti vormindamine
+Label teksti on kõige lihtsam vormindada ning muuta saad erinevaid omadusi, nagu font, värv ja joondus.
+
+    # Label näide
+    label = tk.Label(aken,
+                     text="Tere tulemast Tkinterisse!",
+                     font=("Arial", 16, "bold"),
+                     fg="blue",
+                     bg="yellow",
+                     padx=20,
+                     pady=10)
+    label.pack()
+
+
+
+font – määrab teksti fondi, suuruse ja stiili (näiteks (“Arial”, 16, “bold”))
+font tuleb operatsioonisüsteemi paigaldatud fontidest
+fondi suurust mõõdetakse punktides (pt)
+fondi stiilid on Bold, Italic, Underline, Overstrike. Võib lisada ka mitu “bold italic”
+fg – Teksti värv (foreground). Värve saab määrata nii tekstiliselt (nt “red”, “blue”) kui ka hex-koodiga (nt “#FF0000”).
+bg – Taustavärv (background)
+padx ja pady – siseservade polsterdus (vaba ala)
+Teksti joondamiseks tuleb pack meetodile määrata, et see kataks olmasoleva vaba ruumi ja siis anchor abiga saame määrata joonduse.
+
+    # Label näide
+    label = tk.Label(aken,
+                     text="Tere tulemast Tkinterisse!",
+                     font=("Arial", 16, "bold"),
+                     fg="blue",
+                     bg="yellow",
+                     padx=20,
+                     pady=10,
+                     anchor="w")
+    label.pack(fill="both")
+
+Võimalikud teksti joondamise suunad (ilmakaarte järgi) "n", "ne", "e", "se", "s", "sw", "w", "nw", "center".
+
+
+
+Text teksti vormindamine
+Kõige lihtsam määrata ühetaolist stiili kogu Text vidina tekstile on sama nagu Label puhul.
+
+import tkinter as tk
+
+def loe_fail(failinimi):
+    with open(failinimi, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+
+    # Text näide
+    tekst = tk.Text(aken, wrap=tk.WORD, font=("Helvetica", 12, "bold"), fg="blue")
+    scrollbar = tk.Scrollbar(aken, command=tekst.yview)
+    tekst.config(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    tekst.pack(expand=True, fill=tk.BOTH)
+
+    failisisu = loe_fail("lorem.txt")
+    tekst.insert(tk.INSERT, failisisu)
+
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
+
+Tkinter Text vidin võimaldab redigeerida ja kuvada suuremaid tekstiplokke, kus iga osa tekstist võib omada erinevat stiili. Seetõttu kasutatakse Text vidina puhul silte (tags), et rakendada erinevaid stiile ja omadusi ainult teatud tekstiosadele.
+
+Näiteks võite soovida, et pealkirjad oleksid paksus kirjas ja keskjoondatud, samal ajal kui tavaline tekst on vasakjoondatud ja normaalse fondiga. Selle paindlikkuse saavutamiseks kasutatakse silte (tags), mis võimaldavad teil rakendada erinevaid stiile valitud tekstiosadele.
+
+import tkinter as tk
+
+def loe_fail(failinimi):
+    with open(failinimi, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+
+    # Text vidina loomine
+    tekst = tk.Text(aken, wrap=tk.WORD)
+    scrollbar = tk.Scrollbar(aken, command=tekst.yview)
+    tekst.config(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    tekst.pack(expand=True, fill=tk.BOTH)
+
+    failisisu = loe_fail("lorem.txt")
+    tekst.insert(tk.INSERT, failisisu)
+
+    # Näide: Siltide (laadide) määratlemine ja rakendamine
+    # Laad 1: Keskele joondatud ja paksus kirjas
+    tekst.tag_configure('center_bold', justify='center', font=('Helvetica', 12, 'bold'))
+    tekst.tag_add('center_bold', '1.0', '1.end')
+
+    # Laad 2: Paremale joondatud ja sinise värviga
+    tekst.tag_configure('right_blue', justify='right', foreground='blue')
+    tekst.tag_add('right_blue', '3.0', '3.end')
+
+    # Laad 3: Suur fondi suurus ja punane värv
+    tekst.tag_configure('large_red', font=('Helvetica', 16), foreground='red')
+    tekst.tag_add('large_red', '5.0', '5.end')
+
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+
+
+tag_configure – see meetod määrab kindla sildi stiili ja omadused
+tag_add – see meetod lisab kindla sildi määratud tekstivahemikule
+Pildi lisamine ja kuvamine
+Et tkinteris kasutada pilte, siis esiteks peame importima Tkinteri mooduli ja PIL (Python Imaging Library) mooduli. PIL-i kasutamine võimaldab kuvada rohkem pildiformaate nagu PNG, JPEG, BMP jne. PIL-i kasutatakse koos Tkinteri ImageTk mooduliga. Kasuta kui projekt on suurem ja pikaajaline, sest see pakub paremat ühilduvust ja turvalisust.
+
+import tkinter as tk
+from PIL import Image, ImageTk
+
+Pildi kuvamine Label vidina abil
+Pildi lisamine Tkinteri rakendusse nõuab, et see oleks seotud mingi Tkinteri vidinaga. Tkinteris pole otsest meetodit pildi lisamiseks ilma, et see oleks seotud mõne graafilise komponendiga. Kõige sagedamini kasutatakse selleks Label, Canvas või Button vidinaid. Meie vaatame kuidas pilti kuvada Label abil.
+
+Kasutan seda pilti: python_512x512.png
+
+import tkinter as tk
+from PIL import Image, ImageTk
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+
+    # Pildi avamine ja Tkinteri jaoks ettevalmistamine
+    pilt = Image.open("img/python_512x512.png")
+    foto = ImageTk.PhotoImage(pilt)
+
+    # Pildi kuvamine Label abil
+    label = tk.Label(aken, image=foto)
+    label.image = foto  # Oluline: viide, et vältida garbage collectori poolt pildi kogemata kustutamist
+    label.pack()
+
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+Pildi lisamisel oon olulised järgmised sammud:
+
+Pildi avamine – Image.open avab ja loeb pildifaili ning loob Image objekti
+Pildi konverteerimine – ImageTk.PhotoImage konverteerib selle Image objekti Tkinteri jaoks sobivaks PhotoImage objektiks, mida saab kasutada Tkinteri vidinates
+Pildi kuvamine – kasutame Label vidinat, et pilti kuvada
+Kui Tkinteri rakenduses kasutatakse pilte, tuleb hoida viidet pildile, et vältida Python’i prügikogu (garbage collector) poolt pildi eemaldamist. Ilma viite hoidmiseta võib pilt lihtsalt kaduda.
+
+Ja tegelikult võiks pildi kuvamiseks oma funktsiooni teha:
+
+import tkinter as tk
+from PIL import Image, ImageTk
+
+def kuva_pilt(aken, failinimi):
+    pilt = Image.open(failinimi)
+    foto = ImageTk.PhotoImage(pilt)
+    label = tk.Label(aken, image=foto)
+    label.image = foto
+    label.pack()
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+
+    kuva_pilt(aken, "img/python_512x512.png")
+
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+Pildi töötlemine
+Pildiga töötamiseks on erinevaid meetodeid:
+
+suuruse muutmine (Resize)
+pööramine (Rotate)
+peegeldamine horisontaalselt (Mirror)
+peegeldamine vertikaalselt (Flip)
+heleduse muutmine (Brightness)
+kontrasti muutmine (Contrast)
+värviküllastuse muutmine (Color)
+teravuse muutmine (Sharpness)
+lõikamine (Crop)
+filtri rakendamine (Filter)
+muundamine halltoonidesse (Convert to Grayscale)
+läbipaistvuse muutmine (Alpha Composite)
+Vaatame näiteks pildi suuruse muutmist ja seda kohe, kui pilt on avatud.
+
+import tkinter as tk
+from PIL import Image, ImageTk
+
+def kuva_pilt(aken, failinimi, laius, korgus):
+    pilt = Image.open(failinimi)
+    pilt = pilt.resize((laius, korgus))
+    foto = ImageTk.PhotoImage(pilt)
+    label = tk.Label(aken, image=foto)
+    label.image = foto
+    label.pack()
+
+def main():
+    aken = tk.Tk()
+    aken.title("Mario ülesanded")
+    aken.geometry("400x300")
+
+    kuva_pilt(aken, "img/python_512x512.png", 200, 200)
+
+    aken.mainloop()
+
+if __name__ == "__main__":
+    main()
+
+Täiendsin funktsiooni nii, et kasutaja saab lisada laiuse ning kõrguse enne kui pilt kuvatakse.
+
+Sarnaselt töötavad ka teised meetodid.
+
+# Pildi pööramine
+pilt = pilt.rotate(45)
+
+# Pildi peegeldamine horisontaalselt
+pilt = ImageOps.mirror(pilt)
+
+# Pildi peegeldamine vertikaalselt
+pilt = ImageOps.flip(pilt)
+
+# Pildi heleduse muutmine
+pilt = ImageEnhance.Brightness(pilt).enhance(1.5)
+
+# Pildi kontrasti muutmine
+pilt = ImageEnhance.Contrast(pilt).enhance(1.5)
+
+Ülesanne 2
+Tkinter akna loomine koos pildi, teksti ja kerimisribaga.
+
+Eesmärk: Õppida, kuidas luua GUI rakendus kasutades Tkinter raamistikku, mis sisaldab siltide, piltide ja tekstikastide lisamist ning nende vormindamist ja funktsionaalsuse lisamist (nt kerimisriba).
+
+
+
+Juhis
+
+Loo peamine aken ning kasutame if __name__ == "__main__": main() meetodit
+Loo silt oma nimega ja vorminda see:
+Kirjatüüp: Arial
+Suurus: 16
+Paks kiri (bold)
+Värv: tumesinine
+Lisa pilt mõõtudega: 200x200px, kärbi image.crop((0, 0, 200, 200))
+Lisa tekstikast, mis võtab info failist ja võimaldab kerida. Tekstifail tee ise ja piisava pikkusega
+Laius: 40
+Kõrgus: 20
+Teksti mähkimine: sõna kaupa
+Kirjatüüp: Arial
+Suurus: 12
+Lisa tekstikastile kerimisriba
+Keela akna suuruse muutmine
+bgerbb
